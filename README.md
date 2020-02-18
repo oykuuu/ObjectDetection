@@ -9,6 +9,18 @@ To use the conda environment in a Jupyter notebook, run:
 `python -m ipykernel install --user --name pytorch_env --display-name "Python (pytorch_env)"`
 
 
-### Helpful Links
+## Computer Vision Approach
 
-https://towardsdatascience.com/building-efficient-custom-datasets-in-pytorch-2563b946fd9f
+Using OpenCV's template matching algorithm and custom cropping functions, champions in the teams can be detected.
+
+Run the following command to use the computer vision approach:
+
+`python match_template.py --config ./config.json`
+
+## Deep Learning Approach
+
+The last layer of a pretrained Resnet-18 model has been replaced and trained for Object Detection to predict champions.
+
+Run the following command to use the deep learning approach:
+
+`python train.py --config ./config.json`
