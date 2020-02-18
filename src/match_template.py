@@ -1,3 +1,7 @@
+""" Takes a game image and champion images, finds the names
+of the players in the two teams. Uses a computer vision approach.
+"""
+
 import numpy as np
 import cv2
 import os
@@ -147,6 +151,19 @@ class LoLChampionDetector(object):
         return best_size
 
     def get_matched_players(self, predictions, size):
+        """
+        For a given scaled template, provides the names of the top matched players.
+
+        Parameters
+        ----------
+        team
+            np.array, image of the left or the right team
+
+        Returns
+        -------
+        best_size
+            int, size of the template that gave the best overall match scores.
+        """
         key_name = 'size_' + str(size)
         top_match_index = np.array(predictions[key_name][1]).argsort()[-self.n_players:][::-1]
         top_match_champion_names = [predictions[key_name][0][id] for id in top_match_index]

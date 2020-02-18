@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 import torchvision
 
-from src.data.dataset import LoLTrainDataset, LoLValidDataset
+from data.dataset import LoLTrainDataset, LoLValidDataset
 import pdb
 
 class ChampionTransform(object):
@@ -17,12 +17,12 @@ class ChampionTransform(object):
         
         Parameters
         ----------
+        background
+            np.array, background reference image
         output_size
             int or tuple, size of the image after transformation
         object_size
             tuple, lower and upper bound on champion size
-        background
-            np.array, background reference image
         """
         self.output_size = output_size
         self.background = background
@@ -65,11 +65,37 @@ class ChampionTransform(object):
         pad = (self.output_size - new_size) // 2
         base[pad:pad + new_size, pad:pad + new_size, :] = scaled_image
         box = [pad, pad, pad+new_size, pad+new_size]
-            
+
         return base, box
 
 
 def get_train_dataloader(data_root, background, output_size=65, object_size=(30, 40), batch_size=4, shuffle=True):
+    """
+    Prepares the training dataloader and outputs the LabelEncoder used in
+    mapping champion names into integers.
+
+    Parameters
+    ----------
+    data_root
+        string, path of the folder containing training images (champions)
+    background
+        np.array, image selected as background
+    output_size
+        int or tuple, size of the image after transformation
+    object_size
+        tuple, lower and upper bound on champion size
+    batch_size
+        int, size of the batch
+    shuffle
+        boolean, set to True if data is to be shuffled during training
+
+    Returns
+    -------
+    train_dataloader
+        DataLoader, dataloader containing transformed images for training
+    trained_encoder
+        LabelEncoder, encoder used to turn champion names into integers
+    """
     
     transform_train = ChampionTransform(background, output_size=output_size, object_size=object_size)
 
@@ -82,14 +108,42 @@ def get_train_dataloader(data_root, background, output_size=65, object_size=(30,
     return train_dataloader, trained_encoder
 
 def get_valid_dataloader(encoder, data_path='../screenshot.png', team='left', batch_size=4, shuffle=True):
+    """
+    Prepares the training dataloader and outputs the LabelEncoder used in
+    mapping champion names into integers.
+
+    Parameters
+    ----------
+    encoder
+        LabelEncoder, encoder used to turn champion names into integers
+    data_path
+        string, filepath of the image to be used in validation (screenshot)
+    team
+        string, can take values 'left' or 'right' to refer to either team
+    batch_size
+        int, size of the batch
+    shuffle
+        boolean, set to True if data is to be shuffled during training
+
+    Returns
+    -------
+    valid_dataloader
+        DataLoader, dataloader containing transformed images of one
+        team to be used for validation
+    true_labels,
+        list, list of the true champion names of the team
+    """
 
     valid_dataset = LoLValidDataset(encoder, data_path=data_path, team=team)
 
     valid_dataloader = DataLoader(dataset=valid_dataset, batch_size=batch_size, shuffle=shuffle)
 
-    return valid_dataloader
+    true_labels = valid_dataset.get_true_labels()
+
+    return valid_dataloader, true_labels
     
 if __name__ == "__main__":
+    
     data_root = '~/Documents/falconai/Assets/Assets/FalconAIChallenge/champions/'
     game_img_path = '~/Documents/falconai/Assets/Assets/FalconAIChallenge/screenshot.png'
 

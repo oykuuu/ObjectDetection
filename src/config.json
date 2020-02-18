@@ -8,5 +8,13 @@
     {
         "min_template_size": 25,
         "max_template_size": 45
+    },
+    "dl":
+    {
+        "random_seed": 42,
+        "epochs": 50,
+        "learning_rate": 0.001,
+        "momentum": 0.9,
+        "batch_size": 4
     }
 }

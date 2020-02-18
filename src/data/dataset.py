@@ -131,7 +131,8 @@ class LoLValidDataset(Dataset):
             self.images = self.split_into_players(team_left, num_players=5)
         elif self.team == 'right':
             self.images = self.split_into_players(team_right, num_players=5)
-            # TODO: fill names
+            self.labels = ['Jax', 'LeeSin', 'Yasuo', 'Cassiopeia', 'Blitzcrank']
+
         else:
             raise ValueError('Team values must be either left or right.')
         
@@ -216,10 +217,14 @@ class LoLValidDataset(Dataset):
             players.append(self.convert_to_pil_image(player))
         
         return players
+
     def convert_to_pil_image(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         return image
+
+    def get_true_labels(self):
+        return self.labels
 
 '''
 class LoLDataset_ObjectDetection(Dataset):
