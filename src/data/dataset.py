@@ -1,20 +1,18 @@
-
+""" Custom datasets for Deep Learning approach.
+"""
 import os
-import numpy as np
 from PIL import Image
 import cv2
-import pandas as pd
 
 import torch
 import torchvision
 from torch.utils.data import Dataset
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 
-import pdb
 
 class LoLTrainDataset(Dataset):
     """ LoL training dataset. """
-    
+
     def __init__(self, data_root, transform=None) -> None:
         """
         Initializes parameters.
@@ -34,15 +32,15 @@ class LoLTrainDataset(Dataset):
         """
         self.data_root = data_root
         self.transform = transform
-        #self.encoder = OneHotEncoder(handle_unknown='ignore')
+        # self.encoder = OneHotEncoder(handle_unknown='ignore')
         self.encoder = LabelEncoder()
         self.image_paths = []
-        
+
         self._init_dataset()
-        
+
     def __len__(self) -> int:
         return len(self.image_paths)
-    
+
     def __getitem__(self, idx):
         """
         Returns item at index idx.
@@ -62,18 +60,19 @@ class LoLTrainDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        transform_tensor = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor()])
+        transform_tensor = torchvision.transforms.Compose(
+            [torchvision.transforms.ToTensor()]
+        )
 
         path, label = self.image_paths[idx]
         image = Image.open(path).convert("RGB")
         image, box = self.transform(image)
         image = transform_tensor(image)
         area = (box[3] - box[1]) * (box[2] - box[0])
-        encoded_label = self.encoder.transform(label)#.toarray()
-        
+        encoded_label = self.encoder.transform(label)  # .toarray()
+
         return (image, encoded_label)
-    
+
     def _init_dataset(self):
         """
         Dataset initalizer. Looks into data_root folder and collects
@@ -90,20 +89,21 @@ class LoLTrainDataset(Dataset):
         champions = set()
 
         for name in os.listdir(self.data_root):
-            label = name.split('.')[0]
+            label = name.split(".")[0]
             champions.add(label)
             self.image_paths += [(os.path.join(self.data_root, name), [[label]])]
-        
-        #self.encoder = self.encoder.fit(np.array(list(champions)).reshape(-1, 1))
+
+        # self.encoder = self.encoder.fit(np.array(list(champions)).reshape(-1, 1))
         self.encoder = self.encoder.fit(list(champions))
 
     def get_encoder(self):
         return self.encoder
 
+
 class LoLValidDataset(Dataset):
     """ LoL validation dataset. """
-    
-    def __init__(self, encoder, data_path='../screenshot.png', team='left') -> None:
+
+    def __init__(self, encoder, data_path="../screenshot.png", team="left") -> None:
         """
         Initializes parameters.
 
@@ -122,23 +122,23 @@ class LoLValidDataset(Dataset):
         """
         self.encoder = encoder
         self.team = team
-        
+
         image = cv2.imread(data_path, cv2.IMREAD_COLOR)
 
         team_left, team_right = self.split_game_image(image, adjustment=5)
-        if self.team == 'left':
-            self.labels = ['Ornn', 'RekSai', 'Syndra', 'Aphelios', 'Thresh']
+        if self.team == "left":
+            self.labels = ["Ornn", "RekSai", "Syndra", "Aphelios", "Thresh"]
             self.images = self.split_into_players(team_left, num_players=5)
-        elif self.team == 'right':
+        elif self.team == "right":
             self.images = self.split_into_players(team_right, num_players=5)
-            self.labels = ['Jax', 'LeeSin', 'Yasuo', 'Cassiopeia', 'Blitzcrank']
+            self.labels = ["Jax", "LeeSin", "Yasuo", "Cassiopeia", "Blitzcrank"]
 
         else:
-            raise ValueError('Team values must be either left or right.')
-        
+            raise ValueError("Team values must be either left or right.")
+
     def __len__(self) -> int:
         return len(self.images)
-    
+
     def __getitem__(self, idx):
         """
         Returns item at index idx.
@@ -158,13 +158,14 @@ class LoLValidDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        transform_tensor = torchvision.transforms.Compose([
-            torchvision.transforms.ToTensor()])
+        transform_tensor = torchvision.transforms.Compose(
+            [torchvision.transforms.ToTensor()]
+        )
 
         image = self.images[idx]
         image = transform_tensor(image)
         encoded_label = self.encoder.transform([self.labels[idx]]).ravel()
-        
+
         return (image, encoded_label)
 
     def split_game_image(self, game, adjustment=5):
@@ -186,10 +187,10 @@ class LoLValidDataset(Dataset):
         team_right
             np.array, right half of the screenshot
         """
-        mid = game.shape[1]//2 + adjustment
+        mid = game.shape[1] // 2 + adjustment
         width = 50
-        team_left = game[850:, mid-width:mid, :].copy()
-        team_right = game[850:, mid:mid+width+1, :].copy()
+        team_left = game[850:, mid - width : mid, :].copy()
+        team_right = game[850:, mid : mid + width + 1, :].copy()
 
         return team_left, team_right
 
@@ -211,11 +212,11 @@ class LoLValidDataset(Dataset):
         """
         height = team.shape[0] // num_players
         players = []
-        
+
         for h in range(num_players):
-            player = team[h * height:(h + 1) * height, :, :].copy()
+            player = team[h * height : (h + 1) * height, :, :].copy()
             players.append(self.convert_to_pil_image(player))
-        
+
         return players
 
     def convert_to_pil_image(self, image):
@@ -225,6 +226,7 @@ class LoLValidDataset(Dataset):
 
     def get_true_labels(self):
         return self.labels
+
 
 '''
 class LoLDataset_ObjectDetection(Dataset):
