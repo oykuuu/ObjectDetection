@@ -19,7 +19,7 @@ Run the following command to use the computer vision approach:
 
 ## Deep Learning Approach
 
-The last layer of a pretrained Resnet-18 model has been replaced and trained for Object Detection to predict champions.
+The last layer of a pretrained Resnet-18 model has been replaced and trained for an Object Detection task of predicting champions.
 
 Run the following command to use the deep learning approach:
 
