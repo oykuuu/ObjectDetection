@@ -17,6 +17,8 @@ Run the following command to use the computer vision approach:
 
 `python match_template.py --config ./config.json`
 
+Note: `src/CV_approach.ipynb` walks through the implementation and explains the algorithm.
+
 ## Deep Learning Approach
 
 The last layer of a pretrained Resnet-18 model has been replaced and trained for an Object Detection task of predicting champions.
@@ -24,3 +26,5 @@ The last layer of a pretrained Resnet-18 model has been replaced and trained for
 Run the following command to use the deep learning approach:
 
 `python train.py --config ./config.json`
+
+Note: Similarly, `src/DL_approach.ipynb` describes the steps necessary in training the neural network.
