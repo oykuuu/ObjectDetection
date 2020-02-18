@@ -11,7 +11,6 @@
     },
     "dl":
     {
-        "random_seed": 42,
         "epochs": 50,
         "learning_rate": 0.001,
         "momentum": 0.9,
