@@ -1,0 +1,12 @@
+{
+    "paths":
+    {
+        "game_image_path": "/home/oyku/Documents/falconai/Assets/Assets/screenshot.png",
+        "champion_folder": "/home/oyku/Documents/falconai/Assets/Assets/champions"
+    },
+    "cv":
+    {
+        "min_template_size": 25,
+        "max_template_size": 45
+    }
+}
