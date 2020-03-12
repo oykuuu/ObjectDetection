@@ -6,7 +6,7 @@ The conda environment can be recreated using the following command.
 
 To use the conda environment in a Jupyter notebook, run:
 
-`python -m ipykernel install --user --name pytorch_env --display-name "Python (pytorch_env)"`
+`python -m ipykernel install --user --name image_env --display-name "Python (image_env)"`
 
 
 ## Computer Vision Approach
