@@ -164,9 +164,9 @@ def get_valid_dataloader(
 
 if __name__ == "__main__":
 
-    data_root = "~/Documents/falconai/Assets/Assets/FalconAIChallenge/champions/"
+    data_root = "~/Documents/champions/"
     game_img_path = (
-        "~/Documents/falconai/Assets/Assets/FalconAIChallenge/screenshot.png"
+        "~/Documents/screenshot.png"
     )
 
     game = Image.open(game_img_path).convert("RGB")
