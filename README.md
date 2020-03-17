@@ -1,4 +1,4 @@
-# FalconAIChallenge
+# Object Detection
 
 The conda environment can be recreated using the following command.
 
